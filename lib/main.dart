@@ -16,19 +16,19 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
 
   AnimationController animationController;
-  Animation<Color> animation;
+  Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
-      duration: Duration(milliseconds: 4500),
+      duration: Duration(milliseconds: 1000),
       vsync: this
     );
 
-    animation = ColorTween(
-      begin: Colors.red,
-      end: Colors.blue
+    animation = Tween<double>(
+      begin: 0.0,
+      end: 6.3
     ).animate(animationController)
     ..addListener(() {
       setState(() {
@@ -36,19 +36,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
       });
     });
 
-    animationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff252525) ,
-      body: Center(
-        child: Container(
-          color: animation.value,
-          height: 100,
-          width: 100,
-        )
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Transform.rotate(
+              angle: animation.value,
+              child: Image.asset(
+                'images/knight.png'
+              )
+            )
+          ),
+          GameButton(
+            title: 'start animation',
+            color: Colors.green,
+            onPressed: (){
+              if(animation.value == 0){
+                animationController.forward();
+              } else {
+                print(animation.value);
+                animationController.reverse(from : animation.value/ 6.3);
+              }
+            },
+          )
+        ],
       )
     );
   }
