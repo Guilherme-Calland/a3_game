@@ -27,8 +27,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
     );
 
     animation = Tween<double>(
-      begin: -100.0,
-      end: 100.0
+      begin: 0.0,
+      end: 5.0
     ).animate(animationController)
     ..addListener(() {
       setState(() {
@@ -46,8 +46,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
-            child: Transform.translate(
-              offset: Offset(animation.value, 0),
+            child: Transform.scale(
+              scale: 1 + animation.value,
               child: Image.asset(
                 'images/knight.png'
               )
@@ -57,17 +57,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             title: 'start animation',
             color: Colors.green,
             onPressed: (){
-              if(animation.value == -100){
-                animationController.forward();
-              } else {
-                print(animation.value);
-                animationController.reverse(
-                  from : animation.value >=0 ? 
-                  animation.value/ 100 :
-                  animation.value/ -100
-                );
-              }
+              animation.value == 0 ?
+              animationController.forward() :
+              animationController.reverse(from: animation.value/5);
             },
+
           )
         ],
       )
