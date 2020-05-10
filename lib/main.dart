@@ -13,32 +13,42 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
 
-  Tween<double> scaleTween = Tween<double>(begin: 0, end: 3);
+  AnimationController animationController;
+  Animation<Color> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      duration: Duration(milliseconds: 4500),
+      vsync: this
+    );
+
+    animation = ColorTween(
+      begin: Colors.red,
+      end: Colors.blue
+    ).animate(animationController)
+    ..addListener(() {
+      setState(() {
+         
+      });
+    });
+
+    animationController.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff252525) ,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: TweenAnimationBuilder(
-              tween: scaleTween,
-              duration: Duration(milliseconds: 500),
-              builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: child,
-                );
-              },
-              child: Image.asset('images/knight.png')
-            )
-          ),
-          SizedBox(height: 20),
-        ],
+      body: Center(
+        child: Container(
+          color: animation.value,
+          height: 100,
+          width: 100,
+        )
       )
     );
   }
