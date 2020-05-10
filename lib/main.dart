@@ -15,9 +15,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  double knightSize = 1;
-  double knightPositionX = 0;
-  double knightRotation = 0;
+  Tween<double> scaleTween = Tween<double>(begin: 0, end: 3);
 
   @override
   Widget build(BuildContext context) {
@@ -27,83 +25,19 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
-            child: Transform.rotate(
-              angle: ( knightRotation * 1.5 )/ 90,
-              child: Transform.translate(
-                offset: Offset( knightPositionX, 0 ),
-                child: Transform.scale
-                (
-                  scale: knightSize,
-                  child: Image.asset('images/knight.png')
-                ),
-              ),
-            ),
+            child: TweenAnimationBuilder(
+              tween: scaleTween,
+              duration: Duration(milliseconds: 500),
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: child,
+                );
+              },
+              child: Image.asset('images/knight.png')
+            )
           ),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              GameButton(
-                title: '+ scale',
-                color: Colors.blue,
-                onPressed: (){
-                  setState(() {
-                    knightSize *= 1.5;
-                  });
-                },
-              ),
-              GameButton(
-                title: '+ translate',
-                color: Colors.red,
-                onPressed: (){
-                  setState(() {
-                    knightPositionX += 10;
-                  });
-                },
-              ),
-              GameButton(
-                title: '+ rotate',
-                color: Colors.green,
-                onPressed: (){
-                  setState(() {
-                    knightRotation += 45;
-                  });
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              GameButton(
-                title: '- scale',
-                color: Color(0xff01253b),
-                onPressed: (){
-                  setState(() {
-                    knightSize /= 1.5;
-                  });
-                },
-              ),
-              GameButton(
-                title: '- translate',
-                color: Color(0xff760000),
-                onPressed: (){
-                  setState(() {
-                    knightPositionX -= 10;
-                  });
-                },
-              ),
-              GameButton(
-                title: '- rotate',
-                color: Color(0xff0c3b01),
-                onPressed: (){
-                  setState(() {
-                    knightRotation -= 45;
-                  });
-                },
-              ),
-            ],
-          ),
         ],
       )
     );
