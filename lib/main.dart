@@ -1,4 +1,6 @@
 import 'package:a3_game/components/game.button.dart';
+import 'package:a3_game/components/knight.state.dart';
+import 'package:a3_game/model/knight.dart';
 import 'package:flutter/material.dart';
 
 void main(){
@@ -15,7 +17,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
 
-  AnimationController animationController;
+  AnimationController animationController, animationControllerJump;
   Animation<double> animation;
 
   @override
@@ -25,9 +27,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
       duration: Duration(milliseconds: 2000),
       vsync: this,
       //between 0 and 1
-      value: 0.5
+      value: 0.5,
     );
-
     animation = Tween<double>(
       begin: -200.0,
       end: 200.0,
@@ -38,12 +39,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
       });
     });
 
+
+
   }
+
+  Knight knight = Knight();
+  var knightImage = 'images/knight.png';
 
   @override
   Widget build(BuildContext context) {
-
-    print(animation.value);
 
     return Scaffold(
       backgroundColor: Color(0xff252525) ,
@@ -54,7 +58,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             child: Transform.translate(
               offset: Offset(animation.value, 0),
               child: Image.asset(
-                'images/knight.png'
+                knightImage
               )
             )
           ),
@@ -66,6 +70,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
                 color: Colors.green,
                 onPressed: (){
                   animationController.reverse();
+                  setState(() {
+                    knightImage = 'images/knight-inverso.png';
+                  });
+                  // knight.direction = KnightState.left;
                 }
               ),
               GameButton(
@@ -73,6 +81,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
                 color: Colors.red,
                 onPressed: (){
                   animationController.stop();
+                  // knight.direction = KnightState.still;
                 }
               ),
               GameButton(
@@ -80,6 +89,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
                 color: Colors.green,
                 onPressed: (){
                   animationController.forward();
+                  setState(() {
+                    knightImage = 'images/knight.png';
+                  });
+                  // knight.direction = KnightState.right;
                 }
               ),
             ],
@@ -88,7 +101,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             title: 'jump',
             color: Colors.blue,
             onPressed: (){
-              animationController.forward();
+              
             }
           ),
         ],
