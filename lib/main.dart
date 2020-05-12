@@ -42,12 +42,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   var knightImage = 'images/knight.png';
 
   //physics
-  double d0 = 0;
-  double v0 = 0.5;
-  double vf = -0.5;
-  double t0 = 0;
-  double tf = 500;
-  double a = -1/ 500;
+  
   double t,v,d = 0;
   
 
@@ -169,7 +164,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
       setState(() {
          
       });
-    
+
+      double d0 = 0;
+      double v0 = 0.5;
+      double vf = -0.5;
+      double t0 = 0;
+      double tf = 500;
+      double a = -1/ 500;
+
       t = jumpAnimation.value;
       v = v0 + a*t;
       d = d0 + v0*t + a*t*t/2;
