@@ -23,3 +23,7 @@ flutter:
   assets:
     - images/knight.png
     - images/knight-inverso.png
+    - images/knight-legUp1.png
+    - images/knight-inverso-legUp1.png
+    - images/knight-legUp2.png
+    - images/knight-inverso-legUp2.png

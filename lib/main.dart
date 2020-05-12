@@ -19,73 +19,27 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with TickerProviderStateMixin{
 
-  AnimationController animationController, jumpAnimationController;
-  Animation<double> animation, jumpAnimation;
-
-  int animationTime = 200;
+  AnimationController moveAnimationController, jumpAnimationController;
+  Animation<double> moveAnimation, jumpAnimation;
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      duration: Duration(milliseconds: animationTime*10),
-      vsync: this,
-      //between 0 and 1
-      value: 0.5,
-    );
-   jumpAnimationController = AnimationController(
-      duration: Duration(milliseconds: 1500),
-      vsync: this,
-      //between 0 and 1
-      value: 0.0,
-    );
-
-    animation = Tween<double>(
-      begin: -animationTime.toDouble(),
-      end: animationTime.toDouble(),
-    ).animate(animationController)
-    ..addListener(() { 
-      setState(() {
-         
-      });
-      
-    });
-    jumpAnimation = Tween<double>(
-      begin: 0,
-      end: 500,
-    ).animate(jumpAnimationController)
-    ..addListener(() { 
-      setState(() {
-      });
-      t = jumpAnimation.value;
-      v = v0 + a*t;
-      d = d0 + v0*t + a*t*t/2;
-      
-      print('value of d: ' + d.toString());
-      print('value of t: ' + t.toString());
-      print('value of v: ' + v.toString());
-      print('');
-
-      if(jumpAnimationController.isCompleted)
-      {
-        jumpAnimationController.reset();
-      }
-
-
-    });
+    getMoveAnimation();
+    getJumpAnimation();
   }
-  
+
   @override
   void dispose(){
     super.dispose();
-    animationController.dispose();
+    moveAnimationController.dispose();
     jumpAnimationController.dispose();
   }
 
   Knight knight = Knight();
   var knightImage = 'images/knight.png';
 
-  //physics of the jump
+  //physics
   double d0 = 0;
   double v0 = 0.5;
   double vf = -0.5;
@@ -104,9 +58,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
         children: <Widget>[
           Center(
             child: Transform.translate(
-              offset: Offset(animation.value, -d ),
+              offset: Offset(moveAnimation.value, -d ),
               child: Image.asset(
-                knightImage
+                knightImage,
+                height: 40
               )
             )
           ),
@@ -117,7 +72,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 title: 'go left',
                 color: Colors.green,
                 onPressed: (){
-                  animationController.reverse();
+                  moveAnimationController.reverse();
                   setState(() {
                     knightImage = 'images/knight-inverso.png';
                   });
@@ -128,7 +83,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 title: 'stop',
                 color: Colors.red,
                 onPressed: (){
-                  animationController.stop();
+                  moveAnimationController.stop();
                   // knight.direction = KnightState.still;
                 }
               ),
@@ -136,7 +91,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 title: 'go right',
                 color: Colors.green,
                 onPressed: (){
-                  animationController.forward();
+                  moveAnimationController.forward();
                   setState(() {
                     knightImage = 'images/knight.png';
                   });
@@ -156,6 +111,84 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
         ],
       )
     );
+  }
+
+  void getAnimation(
+    AnimationController controller, 
+    Animation animation, 
+    int duration, 
+    double begin, 
+    double end,
+    double startAt,
+    { Function doThis }) {
+    controller = AnimationController(
+      duration: Duration(milliseconds: duration),
+      vsync: this,
+      //between 0 and 1
+      value: startAt,
+    );
+    animation = Tween<double>(
+      begin: begin,
+      end: end,
+    ).animate(controller)
+    ..addListener(() { 
+      setState(() {
+         
+      });
+      
+    });
+  }
+
+  void getJumpAnimation() {
+    jumpAnimationController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+      //between 0 and 1
+      value: 0.0,
+    );
+    jumpAnimation = Tween<double>(
+      begin: 0,
+      end: 500,
+    ).animate(jumpAnimationController)
+    ..addListener(() { 
+      setState(() {
+         
+      });
+    
+      t = jumpAnimation.value;
+      v = v0 + a*t;
+      d = d0 + v0*t + a*t*t/2;
+      
+      print('value of d: ' + d.toString());
+      print('value of t: ' + t.toString());
+      print('value of v: ' + v.toString());
+      print('');
+    
+      if(jumpAnimationController.isCompleted)
+      {
+        jumpAnimationController.reset();
+      }
+      
+    });
+  }
+
+  void getMoveAnimation() {
+    moveAnimationController = AnimationController(
+      duration: Duration(milliseconds: 2000),
+      vsync: this,
+      //between 0 and 1
+      value: 0.5,
+    );
+    moveAnimation = Tween<double>(
+      begin: -200,
+      end: 200,
+    ).animate(moveAnimationController)
+    ..addListener(() { 
+      setState(() {
+         
+      });
+      
+    });
   }
 }
 
