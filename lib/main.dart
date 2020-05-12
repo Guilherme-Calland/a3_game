@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:a3_game/components/game.button.dart';
 import 'package:a3_game/components/knight.state.dart';
 import 'package:a3_game/model/knight.dart';
@@ -15,40 +17,86 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
+class _HomeState extends State<Home> with TickerProviderStateMixin{
 
-  AnimationController animationController, animationControllerJump;
-  Animation<double> animation;
+  AnimationController animationController, jumpAnimationController;
+  Animation<double> animation, jumpAnimation;
+
+  int animationTime = 200;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
-      duration: Duration(milliseconds: 2000),
+      duration: Duration(milliseconds: animationTime*10),
       vsync: this,
       //between 0 and 1
       value: 0.5,
     );
+   jumpAnimationController = AnimationController(
+      duration: Duration(milliseconds: 1500),
+      vsync: this,
+      //between 0 and 1
+      value: 0.0,
+    );
+
     animation = Tween<double>(
-      begin: -200.0,
-      end: 200.0,
+      begin: -animationTime.toDouble(),
+      end: animationTime.toDouble(),
     ).animate(animationController)
-    ..addListener(() {
+    ..addListener(() { 
       setState(() {
          
       });
+      
     });
+    jumpAnimation = Tween<double>(
+      begin: 0,
+      end: 500,
+    ).animate(jumpAnimationController)
+    ..addListener(() { 
+      setState(() {
+      });
+      t = jumpAnimation.value;
+      v = v0 + a*t;
+      d = d0 + v0*t + a*t*t/2;
+      
+      print('value of d: ' + d.toString());
+      print('value of t: ' + t.toString());
+      print('value of v: ' + v.toString());
+      print('');
+
+      if(jumpAnimationController.isCompleted)
+      {
+        jumpAnimationController.reset();
+      }
 
 
-
+    });
+  }
+  
+  @override
+  void dispose(){
+    super.dispose();
+    animationController.dispose();
+    jumpAnimationController.dispose();
   }
 
   Knight knight = Knight();
   var knightImage = 'images/knight.png';
 
+  //physics of the jump
+  double d0 = 0;
+  double v0 = 0.5;
+  double vf = -0.5;
+  double t0 = 0;
+  double tf = 500;
+  double a = -1/ 500;
+  double t,v,d = 0;
+  
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Color(0xff252525) ,
       body: Column(
@@ -56,7 +104,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
         children: <Widget>[
           Center(
             child: Transform.translate(
-              offset: Offset(animation.value, 0),
+              offset: Offset(animation.value, -d ),
               child: Image.asset(
                 knightImage
               )
@@ -101,6 +149,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             title: 'jump',
             color: Colors.blue,
             onPressed: (){
+              jumpAnimationController.forward();
               
             }
           ),
