@@ -1,9 +1,11 @@
 import 'package:a3_game/components/knight.state.dart';
 
 class Knight{
-  KnightState direction;
+  KnightState state;
+  bool facingLeft;
 
   Knight(){
-    direction = KnightState.still;
+    state = KnightState.still;
+    facingLeft = false;
   }
 }

@@ -19,14 +19,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with TickerProviderStateMixin{
 
-  AnimationController moveAnimationController, jumpAnimationController;
-  Animation<double> moveAnimation, jumpAnimation;
+  AnimationController moveAnimationController, jumpAnimationController, legsAnimationController;
+  Animation<double> moveAnimation, jumpAnimation, legsAnimation;
 
   @override
   void initState() {
     super.initState();
     getMoveAnimation();
     getJumpAnimation();
+    getLegsAnimation();
   }
 
   @override
@@ -34,6 +35,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     super.dispose();
     moveAnimationController.dispose();
     jumpAnimationController.dispose();
+    legsAnimationController.dispose();
   }
 
   Knight knight = Knight();
@@ -61,7 +63,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
               offset: Offset(moveAnimation.value, -d ),
               child: Image.asset(
                 knightImage,
-                height: 40
+                height: 80
               )
             )
           ),
@@ -73,10 +75,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 color: Colors.green,
                 onPressed: (){
                   moveAnimationController.reverse();
+                  legsAnimationController.repeat();
                   setState(() {
                     knightImage = 'images/knight-inverso.png';
+                    // knight.state = KnightState.left;
+                    knight.facingLeft = true;
                   });
-                  // knight.direction = KnightState.left;
                 }
               ),
               GameButton(
@@ -84,7 +88,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 color: Colors.red,
                 onPressed: (){
                   moveAnimationController.stop();
-                  // knight.direction = KnightState.still;
+                  legsAnimationController.stop();
+                  setState(() {
+                    // knight.state = KnightState.still;
+                    knightImage = knight.facingLeft ? 
+                    'images/knight-inverso.png' :
+                    'images/knight.png';
+                  });
                 }
               ),
               GameButton(
@@ -92,10 +102,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 color: Colors.green,
                 onPressed: (){
                   moveAnimationController.forward();
+                  legsAnimationController.repeat();
                   setState(() {
                     knightImage = 'images/knight.png';
+                    // knight.state = KnightState.right;
+                    knight.facingLeft = false;
                   });
-                  // knight.direction = KnightState.right;
                 }
               ),
             ],
@@ -105,7 +117,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
             color: Colors.blue,
             onPressed: (){
               jumpAnimationController.forward();
-              
+              legsAnimationController.stop();
+              setState(() {
+
+              });
             }
           ),
         ],
@@ -113,29 +128,29 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     );
   }
 
-  void getAnimation(
-    AnimationController controller, 
-    Animation animation, 
-    int duration, 
-    double begin, 
-    double end,
-    double startAt,
-    { Function doThis }) {
-    controller = AnimationController(
-      duration: Duration(milliseconds: duration),
+  void getLegsAnimation() {
+    legsAnimationController = AnimationController(
+      duration: Duration(milliseconds: 200),
       vsync: this,
-      //between 0 and 1
-      value: startAt,
     );
-    animation = Tween<double>(
-      begin: begin,
-      end: end,
-    ).animate(controller)
-    ..addListener(() { 
+    legsAnimation = Tween<double>(
+      begin: 0,
+      end: 200,
+    ).animate(legsAnimationController)
+    ..addListener(() {
       setState(() {
-         
       });
-      
+      legsAnimation.value >= 100 ?
+      (
+        knight.facingLeft ?
+        knightImage = 'images/knight-inverso-legUp1.png' :
+        knightImage = 'images/knight-legUp1.png'
+      ) :
+      (
+        knight.facingLeft ?
+        knightImage = 'images/knight-inverso-legUp2.png' :
+        knightImage = 'images/knight-legUp2.png'
+      );
     });
   }
 
@@ -164,8 +179,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
       print('value of v: ' + v.toString());
       print('');
     
-      if(jumpAnimationController.isCompleted)
-      {
+      if(jumpAnimationController.isCompleted){
+        if(moveAnimationController.isAnimating){
+          legsAnimationController.repeat();
+        }
         jumpAnimationController.reset();
       }
       
